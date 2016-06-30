@@ -5,7 +5,7 @@
  * The origin of this IDL file is
  * https://dom.spec.whatwg.org/#range
  * https://domparsing.spec.whatwg.org/#dom-range-createcontextualfragment
- * http://dvcs.w3.org/hg/csswg/raw-file/tip/cssom-view/Overview.html#extensions-to-the-range-interface
+ * https://drafts.csswg.org/cssom-view/#extensions-to-the-range-interface
  */
 
 [Constructor, Exposed=(Window,Worker)]
@@ -80,8 +80,8 @@ partial interface Range {
   DocumentFragment createContextualFragment(DOMString fragment);
 };
 
-// http://dev.w3.org/csswg/cssom-view/#extensions-to-the-range-interface
+// https://drafts.csswg.org/cssom-view/#extensions-to-the-range-interface
 partial interface Range {
-  // DOMRectList? getClientRects();
-  // DOMRect getBoundingClientRect();
+  DOMRectList? getClientRects();
+  DOMRect getBoundingClientRect();
 };

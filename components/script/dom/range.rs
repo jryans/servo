@@ -22,10 +22,12 @@ use dom::bindings::weakref::{WeakRef, WeakRefVec};
 use dom::characterdata::CharacterData;
 use dom::document::Document;
 use dom::documentfragment::DocumentFragment;
+use dom::domrect::DOMRect;
+use dom::domrectlist::DOMRectList;
 use dom::element::Element;
 use dom::htmlbodyelement::HTMLBodyElement;
 use dom::htmlscriptelement::HTMLScriptElement;
-use dom::node::{Node, UnbindContext};
+use dom::node::{Node, UnbindContext, window_from_node};
 use dom::text::Text;
 use heapsize::HeapSizeOf;
 use js::jsapi::JSTracer;
@@ -933,6 +935,28 @@ impl RangeMethods for Range {
 
         // Step 5.
         Ok(fragment_node)
+    }
+
+    // https://drafts.csswg.org/cssom-view/#dom-range-getclientrects
+    fn GetClientRects(&self) -> Option<Root<DOMRectList>> {
+        let window = window_from_node(self.start.node);
+        // let raw_rects = self.upcast::<Node>().content_boxes();
+        // let rects = raw_rects.iter().map(|rect| {
+        //     DOMRect::new(GlobalRef::Window(win.r()),
+        //                  rect.origin.x.to_f64_px(),
+        //                  rect.origin.y.to_f64_px(),
+        //                  rect.size.width.to_f64_px(),
+        //                  rect.size.height.to_f64_px())
+        // });
+        let rect = DOMRect::new(GlobalRef::Window(window.r()), 0.0, 0.0, 0.0, 0.0);
+        let rects = vec![rect];
+        Ok(DOMRectList::new(window.r(), rects))
+    }
+
+    // https://drafts.csswg.org/cssom-view/#dom-range-getboundingclientrect
+    fn GetBoundingClientRect(&self) -> Root<DOMRect> {
+        let window = window_from_node(self.start.node);
+        DOMRect::new(GlobalRef::Window(window.r()), 0.0, 0.0, 0.0, 0.0)
     }
 }
 
