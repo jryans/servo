@@ -37,6 +37,10 @@ impl DOMRectList {
     pub fn rects(&self) -> &Vec<JS<DOMRect>> {
         &self.rects
     }
+
+    pub fn is_empty(&self) -> bool {
+        self.rects.is_empty()
+    }
 }
 
 impl DOMRectListMethods for DOMRectList {

@@ -943,20 +943,28 @@ impl RangeMethods for Range {
         let (first_contained_child, last_contained_child, contained_children) =
             try!(self.contained_children());
 
-        let rects: Vec<Root<DOMRect>> = contained_children.iter()
-                                      .filter_map(|n| Root::downcast::<Element>(*n))
-                                      .flat_map(|e| e.GetClientRects().r().rects())
-                                      .map(|r: &JS<DOMRect>| Root::from_ref(&**r))
-                                      .collect();
+        // let test: Vec<Root<Element>> = contained_children.iter()
+        //                                .filter_map(Root::downcast::<Element>)
+        //                                .collect();
+        //
+        // let rects: Vec<Root<DOMRect>> = contained_children.iter()
+        //                               .filter_map(Root::downcast::<Element>)
+        //                               .flat_map(|e: Root<Element>| e.GetClientRects().r().rects())
+        //                               .map(|r: &JS<DOMRect>| Root::from_ref(&**r))
+        //                               .collect();
+
+        let mut rects: Vec<Root<DOMRect>> = vec![];
+
+        for child in contained_children {
+            if let Some(element) = child.downcast::<Element>() {
+                for rect in element.GetClientRects().r().rects() {
+                    rects.push(Root::from_ref(&**rect));
+                }
+            }
+        }
 
         let window = window_from_node(&*self.StartContainer());
         Ok(DOMRectList::new(window.r(), rects.into_iter()))
-
-        // for child in contained_children {
-        //     if let Some(element) = child.downcast::<Element> {
-        //         element.GetClientRects();
-        //     }
-        // }
 
         // let raw_rects = self.upcast::<Node>().content_boxes();
         // let rects = raw_rects.iter().map(|rect| {
@@ -974,9 +982,19 @@ impl RangeMethods for Range {
     }
 
     // https://drafts.csswg.org/cssom-view/#dom-range-getboundingclientrect
-    fn GetBoundingClientRect(&self) -> Root<DOMRect> {
+    fn GetBoundingClientRect(&self) -> Fallible<Root<DOMRect>> {
         let window = window_from_node(&*self.StartContainer());
-        DOMRect::new(GlobalRef::Window(window.r()), 0.0, 0.0, 0.0, 0.0)
+
+        // Step 1.
+        let rects = try!(self.GetClientRects());
+
+        // Step 2.
+        if rects.is_empty() {
+            return Ok(DOMRect::new(GlobalRef::Window(window.r()), 0.0, 0.0, 0.0, 0.0))
+        }
+
+        // WIP (use match?)
+        Ok(Root::from_ref(&**rects.rects().get(0).unwrap()))
     }
 }
 

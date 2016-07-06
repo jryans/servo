@@ -84,5 +84,6 @@ partial interface Range {
 partial interface Range {
   [Throws]
   DOMRectList getClientRects();
+  [Throws]
   DOMRect getBoundingClientRect();
 };
