@@ -33,6 +33,10 @@ impl DOMRectList {
                            GlobalRef::Window(window),
                            DOMRectListBinding::Wrap)
     }
+
+    pub fn rects(&self) -> &Vec<JS<DOMRect>> {
+        &self.rects
+    }
 }
 
 impl DOMRectListMethods for DOMRectList {

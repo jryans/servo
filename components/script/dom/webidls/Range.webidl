@@ -82,6 +82,7 @@ partial interface Range {
 
 // https://drafts.csswg.org/cssom-view/#extensions-to-the-range-interface
 partial interface Range {
-  DOMRectList? getClientRects();
+  [Throws]
+  DOMRectList getClientRects();
   DOMRect getBoundingClientRect();
 };
