@@ -1,0 +1,63 @@
+<!doctype html>
+<meta charset="utf-8">
+<title></title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+
+<div id="root">
+  There can be no thought of finishing for
+  <span id="a">
+    ‘aiming for the stars.’
+  </span>
+  <span id="b">
+    Both figuratively and literally, it is a
+    <span id="b1">
+      task to occupy
+    </span>
+    the generations.
+  </span>
+  And no matter how much progress one makes,
+  there is always the thrill of just beginning.
+</div>
+
+<style>
+
+  #a {
+    padding: 10px;
+    margin: 2px;
+  }
+
+</style>
+
+<script>
+  function assert_rect_equals(actual, expected) {
+    assert_equals(actual.x, expected.x, "X coordinate");
+    assert_equals(actual.y, expected.y, "Y coordinate");
+    assert_equals(actual.width, expected.width, "Width");
+    assert_equals(actual.height, expected.height, "Height");
+  }
+
+  function assert_rect_list_equals(actual, expected) {
+    assert_equals(actual.length, expected.length, "Length of rect list");
+    for (var i = 0; i < actual.length; i++) {
+      assert_rect_equals(actual[i], expected[i]);
+    }
+  }
+
+  test(function () {
+    var r = document.createRange();
+    r.setStart(root, 0);
+    r.setEnd(root, 0);
+    var rects = r.getClientRects();
+    assert_equals(rects.length, 0, "0 rects in the list");
+  }, "Collapsed");
+
+  test(function () {
+    var r = document.createRange();
+    r.setStart(a, 0);
+    r.setEnd(a, 1);
+    var rects = r.getClientRects();
+    var elemRects = a.getClientRects();
+    assert_rect_list_equals(rects, elemRects);
+  }, "Single element, entire text child");
+</script>
